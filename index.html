@@ -3,40 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance Ingelec - Archive</title>
+    <title>Ingelec - Planning Maintenance</title>
     <style>
-        :root { --primary: #2c3e50; --bg: #f4f7f6; }
-        body { font-family: sans-serif; background: var(--bg); padding: 10px; }
+        :root { 
+            --ingelec-blue: #0056b3; 
+            --dark-grey: #2c3e50; 
+            --light-bg: #f8f9fa; 
+            --accent: #e67e22;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 15px; color: var(--dark-grey); }
         .container { max-width: 500px; margin: 0 auto; }
-        .header { text-align: center; background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .day-card { background: white; border-radius: 12px; margin-bottom: 10px; padding: 10px; border-left: 5px solid #27ae60; }
-        .shift-info { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 0.9em; }
-        .name { font-weight: bold; color: var(--primary); }
         
-        /* Style l'Archive */
-        .archive-section { margin-top: 30px; }
-        .archive-btn { width: 100%; padding: 12px; background: #34495e; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .archive-content { display: none; margin-top: 10px; }
-        .archive-week { background: #ebedef; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85em; border: 1px solid #ccc; }
-        .archive-week h4 { margin: 0 0 5px 0; color: #555; border-bottom: 1px solid #999; }
+        /* Header avec Logo */
+        .header { 
+            text-align: center; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 20px; 
+            margin-bottom: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--ingelec-blue);
+        }
+        .logo { width: 150px; margin-bottom: 10px; }
+        .header h2 { margin: 5px 0; color: var(--ingelec-blue); font-size: 1.4em; }
+        
+        /* Cartes des Jours */
+        .day-card { 
+            background: white; 
+            border-radius: 15px; 
+            margin-bottom: 12px; 
+            padding: 15px; 
+            border-left: 6px solid var(--ingelec-blue);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .day-title { font-weight: bold; color: var(--ingelec-blue); font-size: 1.1em; margin-bottom: 8px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
+        .shift-info { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f1f1; font-size: 0.95em; }
+        .name { font-weight: 600; color: var(--dark-grey); cursor: pointer; }
+        .name:hover { color: var(--accent); }
+        
+        /* Archive Section */
+        .archive-section { margin-top: 25px; }
+        .archive-btn { 
+            width: 100%; padding: 14px; 
+            background: var(--dark-grey); color: white; 
+            border: none; border-radius: 10px; 
+            cursor: pointer; font-weight: bold; font-size: 1em;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .archive-content { display: none; margin-top: 12px; animation: fadeIn 0.3s; }
+        .archive-week { 
+            background: #fff; padding: 12px; border-radius: 10px; 
+            margin-bottom: 8px; font-size: 0.85em; border: 1px solid #dee2e6;
+            box-shadow: inset 2px 0 0 var(--ingelec-blue);
+        }
+        .archive-week h4 { margin: 0 0 5px 0; color: var(--ingelec-blue); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h2>Planning Maintenance</h2>
-        <p id="currentDate" style="color: #7f8c8d;"></p>
+        <div style="font-size: 2em; font-weight: 900; color: #0056b3; letter-spacing: -1px;">INGELEC</div>
+        <div style="font-size: 0.8em; color: #7f8c8d; font-weight: bold; letter-spacing: 2px; margin-bottom: 10px;">MAINTENANCE</div>
+        <p id="currentDate" style="font-size: 0.9em; margin: 0;"></p>
     </div>
 
     <div id="schedule"></div>
 
     <div class="archive-section">
-        <button class="archive-btn" onclick="toggleArchive()">📁 Voir l'Archive (Historique)</button>
+        <button class="archive-btn" onclick="toggleArchive()">📁 Voir l'Archive Historique</button>
         <div id="archiveContent" class="archive-content"></div>
     </div>
 
-    <button style="width:100%; margin-top:20px; padding:10px; background:#bdc3c7; border:none; border-radius:8px; cursor:pointer;" onclick="resetAll()">Réinitialiser Tout</button>
+    <p style="text-align:center; font-size:0.7em; color:#bdc3c7; margin-top:30px;">Système Automatisé - Ingelec v2.0</p>
 </div>
 
 <script>
@@ -54,9 +95,8 @@
 
     function init() {
         const today = new Date();
-        document.getElementById('currentDate').innerText = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        document.getElementById('currentDate').innerText = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         
-        // حفظ بيانات السيمانة في الأرشيف إذا انتهت
         saveToArchive();
         renderCurrentWeek();
         renderArchive();
@@ -68,53 +108,70 @@
         let html = "";
         days.forEach((day, i) => {
             html += `<div class="day-card">
-                <div style="font-weight:bold; color:#27ae60; margin-bottom:5px;">${day}</div>
-                <div class="shift-info"><span>Matin:</span> <span class="name">${currentShifts[0]}</span></div>
-                <div class="shift-info"><span>Soir:</span> <span class="name">${currentShifts[1]}</span></div>
-                <div class="shift-info"><span>Nuit:</span> <span class="name">${currentShifts[2]}</span></div>
+                <div class="day-title">${day}</div>
+                <div class="shift-info"><span>🌅 Matin (06h-14h)</span> <span class="name" onclick="editName(this)">${currentShifts[0]}</span></div>
+                <div class="shift-info"><span>🌇 Après-midi (14h-22h)</span> <span class="name" onclick="editName(this)">${currentShifts[1]}</span></div>
+                <div class="shift-info"><span>🌃 Nuit (22h-06h)</span> <span class="name" onclick="editName(this)">${currentShifts[2]}</span></div>
             </div>`;
         });
         scheduleDiv.innerHTML = html;
     }
 
+    function editName(el) {
+        let newName = prompt("Modifier le nom du technicien :", el.innerText);
+        if(newName) el.innerText = newName;
+    }
+
     function saveToArchive() {
         const today = new Date();
-        const weekKey = "week_" + Math.floor(today / (1000 * 60 * 60 * 24 * 7));
-        let archive = JSON.parse(localStorage.getItem('ingelec_archive') || '{}');
+        // الحصول على رقم الأسبوع والسنة ليكون المفتاح فريداً
+        const weekNum = getWeekNumber(today);
+        const weekKey = `week_${today.getFullYear()}_${weekNum}`;
+        
+        let archive = JSON.parse(localStorage.getItem('ingelec_archive_v2') || '{}');
         
         if (!archive[weekKey]) {
             const currentShifts = getRotation(today);
             archive[weekKey] = {
-                dateRange: "Semaine du " + today.toLocaleDateString(),
-                staff: currentShifts
+                dateRange: "Semaine " + weekNum + " (" + today.getFullYear() + ")",
+                staff: currentShifts,
+                timestamp: today.getTime()
             };
-            localStorage.setItem('ingelec_archive', JSON.stringify(archive));
+            localStorage.setItem('ingelec_archive_v2', JSON.stringify(archive));
         }
+    }
+
+    function getWeekNumber(d) {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     }
 
     function renderArchive() {
         const archiveDiv = document.getElementById('archiveContent');
-        let archive = JSON.parse(localStorage.getItem('ingelec_archive') || '{}');
+        let archive = JSON.parse(localStorage.getItem('ingelec_archive_v2') || '{}');
         let html = "";
-        for (let key in archive) {
+        
+        // ترتيب الأرشيف من الأحدث إلى الأقدم
+        const sortedKeys = Object.keys(archive).sort((a, b) => archive[b].timestamp - archive[a].timestamp);
+        
+        sortedKeys.forEach(key => {
             html += `<div class="archive-week">
-                <h4>${archive[key].dateRange}</h4>
-                Matin: ${archive[key].staff[0]} | Soir: ${archive[key].staff[1]} | Nuit: ${archive[key].staff[2]}
+                <h4>📊 ${archive[key].dateRange}</h4>
+                <div style="display:flex; gap:10px; color:#555;">
+                    <span>M: <b>${archive[key].staff[0]}</b></span> | 
+                    <span>A: <b>${archive[key].staff[1]}</b></span> | 
+                    <span>N: <b>${archive[key].staff[2]}</b></span>
+                </div>
             </div>`;
-        }
-        archiveDiv.innerHTML = html || "Aucun archive pour le moment.";
+        });
+        archiveDiv.innerHTML = html || "Aucun historique disponible pour le moment.";
     }
 
     function toggleArchive() {
         const content = document.getElementById('archiveContent');
         content.style.display = content.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function resetAll() {
-        if(confirm("Effacer tout l'archive ?")) {
-            localStorage.removeItem('ingelec_archive');
-            location.reload();
-        }
     }
 
     init();
