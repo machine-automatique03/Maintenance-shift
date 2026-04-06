@@ -3,177 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingelec - Planning Maintenance</title>
+    <title>Ingelec Maintenance</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0056b3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
     <style>
-        :root { 
-            --ingelec-blue: #0056b3; 
-            --dark-grey: #2c3e50; 
-            --light-bg: #f8f9fa; 
-            --accent: #e67e22;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 15px; color: var(--dark-grey); }
+        :root { --ingelec-blue: #0056b3; --dark-grey: #2c3e50; --light-bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light-bg); padding: 15px; color: var(--dark-grey); margin: 0; }
         .container { max-width: 500px; margin: 0 auto; }
-        
-        /* Header avec Logo */
-        .header { 
-            text-align: center; 
-            background: white; 
-            padding: 20px; 
-            border-radius: 20px; 
-            margin-bottom: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-top: 5px solid var(--ingelec-blue);
-        }
-        .logo { width: 150px; margin-bottom: 10px; }
-        .header h2 { margin: 5px 0; color: var(--ingelec-blue); font-size: 1.4em; }
-        
-        /* Cartes des Jours */
-        .day-card { 
-            background: white; 
-            border-radius: 15px; 
-            margin-bottom: 12px; 
-            padding: 15px; 
-            border-left: 6px solid var(--ingelec-blue);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .day-title { font-weight: bold; color: var(--ingelec-blue); font-size: 1.1em; margin-bottom: 8px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
-        .shift-info { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f1f1; font-size: 0.95em; }
-        .name { font-weight: 600; color: var(--dark-grey); cursor: pointer; }
-        .name:hover { color: var(--accent); }
-        
-        /* Archive Section */
-        .archive-section { margin-top: 25px; }
-        .archive-btn { 
-            width: 100%; padding: 14px; 
-            background: var(--dark-grey); color: white; 
-            border: none; border-radius: 10px; 
-            cursor: pointer; font-weight: bold; font-size: 1em;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .archive-content { display: none; margin-top: 12px; animation: fadeIn 0.3s; }
-        .archive-week { 
-            background: #fff; padding: 12px; border-radius: 10px; 
-            margin-bottom: 8px; font-size: 0.85em; border: 1px solid #dee2e6;
-            box-shadow: inset 2px 0 0 var(--ingelec-blue);
-        }
-        .archive-week h4 { margin: 0 0 5px 0; color: var(--ingelec-blue); }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .header { text-align: center; background: white; padding: 20px; border-radius: 0 0 20px 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--ingelec-blue); }
+        .day-card { background: white; border-radius: 15px; margin-bottom: 12px; padding: 15px; border-left: 6px solid var(--ingelec-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .day-title { font-weight: bold; color: var(--ingelec-blue); margin-bottom: 8px; border-bottom: 1px dashed #ddd; }
+        .shift-info { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f1f1; font-size: 0.95em; }
+        .name { font-weight: 600; color: var(--dark-grey); }
+        .archive-btn { width: 100%; padding: 15px; background: var(--dark-grey); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        .archive-content { display: none; margin-top: 12px; }
+        .archive-week { background: #fff; padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #dee2e6; box-shadow: inset 3px 0 0 var(--ingelec-blue); }
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="header">
-        <div style="font-size: 2em; font-weight: 900; color: #0056b3; letter-spacing: -1px;">INGELEC</div>
-        <div style="font-size: 0.8em; color: #7f8c8d; font-weight: bold; letter-spacing: 2px; margin-bottom: 10px;">MAINTENANCE</div>
-        <p id="currentDate" style="font-size: 0.9em; margin: 0;"></p>
+        <div style="font-size: 2.2em; font-weight: 900; color: #0056b3;">INGELEC</div>
+        <div style="font-size: 0.8em; font-weight: bold; color: #7f8c8d; letter-spacing: 2px;">MAINTENANCE APP</div>
+        <p id="currentDate" style="margin-top:10px; font-size:0.9em;"></p>
     </div>
-
     <div id="schedule"></div>
-
-    <div class="archive-section">
-        <button class="archive-btn" onclick="toggleArchive()">📁 Voir l'Archive Historique</button>
-        <div id="archiveContent" class="archive-content"></div>
-    </div>
-
-    <p style="text-align:center; font-size:0.7em; color:#bdc3c7; margin-top:30px;">Système Automatisé - Ingelec v2.0</p>
+    <button class="archive-btn" onclick="toggleArchive()">📁 VOIR L'ARCHIVE HISTORIQUE</button>
+    <div id="archiveContent" class="archive-content"></div>
 </div>
 
 <script>
     const techs = ["Ismail", "Hamza", "Hicham"];
     const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-
     function getRotation(date) {
         const ref = new Date('2026-04-06');
-        const diffWeeks = Math.floor((date - ref) / (1000 * 60 * 60 * 24 * 7));
+        const diffWeeks = Math.floor((date - ref) / (604800000));
         const cycle = ((diffWeeks % 3) + 3) % 3;
-        if (cycle === 0) return ["Ismail", "Hamza", "Hicham"];
-        if (cycle === 1) return ["Hamza", "Hicham", "Ismail"];
-        return ["Hicham", "Ismail", "Hamza"];
+        return cycle === 0 ? ["Ismail", "Hamza", "Hicham"] : cycle === 1 ? ["Hamza", "Hicham", "Ismail"] : ["Hicham", "Ismail", "Hamza"];
     }
-
     function init() {
         const today = new Date();
         document.getElementById('currentDate').innerText = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        
-        saveToArchive();
-        renderCurrentWeek();
-        renderArchive();
+        saveToArchive(); renderCurrentWeek(); renderArchive();
     }
-
     function renderCurrentWeek() {
         const scheduleDiv = document.getElementById('schedule');
-        const currentShifts = getRotation(new Date());
+        const shifts = getRotation(new Date());
         let html = "";
-        days.forEach((day, i) => {
-            html += `<div class="day-card">
-                <div class="day-title">${day}</div>
-                <div class="shift-info"><span>🌅 Matin (06h-14h)</span> <span class="name" onclick="editName(this)">${currentShifts[0]}</span></div>
-                <div class="shift-info"><span>🌇 Après-midi (14h-22h)</span> <span class="name" onclick="editName(this)">${currentShifts[1]}</span></div>
-                <div class="shift-info"><span>🌃 Nuit (22h-06h)</span> <span class="name" onclick="editName(this)">${currentShifts[2]}</span></div>
-            </div>`;
+        days.forEach(day => {
+            html += `<div class="day-card"><div class="day-title">${day}</div>
+                <div class="shift-info"><span>🌅 Matin</span> <span class="name">${shifts[0]}</span></div>
+                <div class="shift-info"><span>🌇 Après-midi</span> <span class="name">${shifts[1]}</span></div>
+                <div class="shift-info"><span>🌃 Nuit</span> <span class="name">${shifts[2]}</span></div></div>`;
         });
         scheduleDiv.innerHTML = html;
     }
-
-    function editName(el) {
-        let newName = prompt("Modifier le nom du technicien :", el.innerText);
-        if(newName) el.innerText = newName;
-    }
-
     function saveToArchive() {
         const today = new Date();
-        // الحصول على رقم الأسبوع والسنة ليكون المفتاح فريداً
-        const weekNum = getWeekNumber(today);
-        const weekKey = `week_${today.getFullYear()}_${weekNum}`;
-        
+        const weekNum = Math.ceil((((today - new Date(today.getFullYear(), 0, 1)) / 86400000) + 1) / 7);
+        const weekKey = `ing_v2_${today.getFullYear()}_${weekNum}`;
         let archive = JSON.parse(localStorage.getItem('ingelec_archive_v2') || '{}');
-        
         if (!archive[weekKey]) {
-            const currentShifts = getRotation(today);
-            archive[weekKey] = {
-                dateRange: "Semaine " + weekNum + " (" + today.getFullYear() + ")",
-                staff: currentShifts,
-                timestamp: today.getTime()
-            };
+            archive[weekKey] = { range: "Semaine " + weekNum + " (" + today.getFullYear() + ")", staff: getRotation(today), ts: today.getTime() };
             localStorage.setItem('ingelec_archive_v2', JSON.stringify(archive));
         }
     }
-
-    function getWeekNumber(d) {
-        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-        var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    }
-
     function renderArchive() {
         const archiveDiv = document.getElementById('archiveContent');
         let archive = JSON.parse(localStorage.getItem('ingelec_archive_v2') || '{}');
-        let html = "";
-        
-        // ترتيب الأرشيف من الأحدث إلى الأقدم
-        const sortedKeys = Object.keys(archive).sort((a, b) => archive[b].timestamp - archive[a].timestamp);
-        
-        sortedKeys.forEach(key => {
-            html += `<div class="archive-week">
-                <h4>📊 ${archive[key].dateRange}</h4>
-                <div style="display:flex; gap:10px; color:#555;">
-                    <span>M: <b>${archive[key].staff[0]}</b></span> | 
-                    <span>A: <b>${archive[key].staff[1]}</b></span> | 
-                    <span>N: <b>${archive[key].staff[2]}</b></span>
-                </div>
-            </div>`;
-        });
-        archiveDiv.innerHTML = html || "Aucun historique disponible pour le moment.";
+        const sorted = Object.keys(archive).sort((a,b) => archive[b].ts - archive[a].ts);
+        archiveDiv.innerHTML = sorted.map(k => `<div class="archive-week"><h4>📊 ${archive[k].range}</h4>M: ${archive[k].staff[0]} | A: ${archive[k].staff[1]} | N: ${archive[k].staff[2]}</div>`).join('') || "Aucun historique.";
     }
-
-    function toggleArchive() {
-        const content = document.getElementById('archiveContent');
-        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-    }
-
+    function toggleArchive() { const c = document.getElementById('archiveContent'); c.style.display = c.style.display === 'block' ? 'none' : 'block'; }
     init();
 </script>
 </body>
