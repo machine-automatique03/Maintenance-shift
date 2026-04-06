@@ -2,7 +2,7 @@
   "name": "Ingelec Maintenance Planning",
   "short_name": "Ingelec",
   "description": "Planning de rotation maintenance Ingelec",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0056b3",
@@ -11,7 +11,13 @@
       "src": "https://cdn-icons-png.flaticon.com/512/3067/3067451.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3067/3067451.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
