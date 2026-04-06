@@ -1,32 +1,24 @@
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingelec - Planning Hebdomadaire</title>
+    <title>Maintenance Ingelec - Archive</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #e74c3c; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); padding: 10px; margin: 0; }
+        :root { --primary: #2c3e50; --bg: #f4f7f6; }
+        body { font-family: sans-serif; background: var(--bg); padding: 10px; }
         .container { max-width: 500px; margin: 0 auto; }
-        .header { text-align: center; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        h2 { margin: 0; color: var(--primary); font-size: 1.2em; text-transform: uppercase; }
+        .header { text-align: center; background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .day-card { background: white; border-radius: 12px; margin-bottom: 10px; padding: 10px; border-left: 5px solid #27ae60; }
+        .shift-info { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 0.9em; }
+        .name { font-weight: bold; color: var(--primary); }
         
-        .day-card { background: white; border-radius: 15px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 8px solid #bdc3c7; }
-        .is-today { border-left-color: #27ae60; background: #f0fff4; transform: scale(1.02); }
-        
-        .day-title { padding: 10px 15px; font-weight: bold; background: #f8f9fa; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
-        .is-today .day-title { background: #27ae60; color: white; }
-        
-        .shift-grid { padding: 5px 15px; }
-        .shift-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f1f1; align-items: center; }
-        .shift-item:last-child { border-bottom: none; }
-        
-        .label { font-size: 0.8em; color: #7f8c8d; font-weight: 600; }
-        .name { font-weight: bold; color: var(--primary); cursor: pointer; text-decoration: underline dotted #ccc; }
-        
-        .holiday-card { background: #ffebee; color: var(--accent); text-align: center; padding: 20px; border-radius: 15px; font-weight: bold; margin-top: 10px; border: 2px dashed var(--accent); }
-        .btn-reset { display: block; width: 100%; padding: 12px; margin-top: 20px; border: none; background: #95a5a6; color: white; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .footer-info { text-align: center; font-size: 0.75em; color: #999; margin-top: 15px; }
+        /* Style l'Archive */
+        .archive-section { margin-top: 30px; }
+        .archive-btn { width: 100%; padding: 12px; background: #34495e; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .archive-content { display: none; margin-top: 10px; }
+        .archive-week { background: #ebedef; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85em; border: 1px solid #ccc; }
+        .archive-week h4 { margin: 0 0 5px 0; color: #555; border-bottom: 1px solid #999; }
     </style>
 </head>
 <body>
@@ -34,99 +26,98 @@
 <div class="container">
     <div class="header">
         <h2>Planning Maintenance</h2>
-        <div id="weekRange" style="font-size: 0.9em; color: #7f8c8d; margin-top: 5px;"></div>
+        <p id="currentDate" style="color: #7f8c8d;"></p>
     </div>
 
     <div id="schedule"></div>
 
-    <div class="holiday-card">
-        🛑 DIMANCHE : REPOS TOTAL 🛑
+    <div class="archive-section">
+        <button class="archive-btn" onclick="toggleArchive()">📁 Voir l'Archive (Historique)</button>
+        <div id="archiveContent" class="archive-content"></div>
     </div>
 
-    <button class="btn-reset" onclick="resetToAuto()">Réinitialiser au Planning Auto</button>
-    <p class="footer-info">Appuyez sur un nom pour faire un "Swap" manuel.</p>
+    <button style="width:100%; margin-top:20px; padding:10px; background:#bdc3c7; border:none; border-radius:8px; cursor:pointer;" onclick="resetAll()">Réinitialiser Tout</button>
 </div>
 
 <script>
+    const techs = ["Ismail", "Hamza", "Hicham"];
     const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-    
-    function getWeekRotation() {
-        // Date de référence : Lundi 6 Avril 2026
-        const ref = new Date('2026-04-06');
-        const now = new Date();
-        const diffWeeks = Math.floor((now - ref) / (1000 * 60 * 60 * 24 * 7));
-        const cycle = ((diffWeeks % 3) + 3) % 3;
 
-        // Rotation automatique des 3 techniciens
+    function getRotation(date) {
+        const ref = new Date('2026-04-06');
+        const diffWeeks = Math.floor((date - ref) / (1000 * 60 * 60 * 24 * 7));
+        const cycle = ((diffWeeks % 3) + 3) % 3;
         if (cycle === 0) return ["Ismail", "Hamza", "Hicham"];
         if (cycle === 1) return ["Hamza", "Hicham", "Ismail"];
         return ["Hicham", "Ismail", "Hamza"];
     }
 
-    function render() {
-        const scheduleDiv = document.getElementById('schedule');
-        scheduleDiv.innerHTML = "";
+    function init() {
         const today = new Date();
-        const currentDayIdx = today.getDay(); // 0=Dim, 1=Lun...
+        document.getElementById('currentDate').innerText = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
         
-        // Récupérer les noms (Auto ou Manuel)
-        let currentTechs = JSON.parse(localStorage.getItem('ingelec_weekly_data'));
-        const savedWeek = localStorage.getItem('ingelec_saved_week');
-        const thisWeek = Math.floor((today - new Date('2026-04-06')) / (1000 * 60 * 60 * 24 * 7));
+        // حفظ بيانات السيمانة في الأرشيف إذا انتهت
+        saveToArchive();
+        renderCurrentWeek();
+        renderArchive();
+    }
 
-        if (!currentTechs || savedWeek != thisWeek) {
-            currentTechs = getWeekRotation();
-            localStorage.setItem('ingelec_weekly_data', JSON.stringify(currentTechs));
-            localStorage.setItem('ingelec_saved_week', thisWeek);
-        }
-
+    function renderCurrentWeek() {
+        const scheduleDiv = document.getElementById('schedule');
+        const currentShifts = getRotation(new Date());
+        let html = "";
         days.forEach((day, i) => {
-            const isToday = (i + 1) === currentDayIdx;
-            const card = document.createElement('div');
-            card.className = `day-card ${isToday ? 'is-today' : ''}`;
-            
-            card.innerHTML = `
-                <div class="day-title">
-                    <span>${day}</span>
-                    <span style="font-size: 0.7em;">${isToday ? 'AUJOURD\'HUI' : ''}</span>
-                </div>
-                <div class="shift-grid">
-                    <div class="shift-item">
-                        <span class="label">☀️ MATIN (06-14)</span>
-                        <span class="name" onclick="swap(0)">${currentTechs[0]}</span>
-                    </div>
-                    <div class="shift-item">
-                        <span class="label">⛅ SOIR (14-22)</span>
-                        <span class="name" onclick="swap(1)">${currentTechs[1]}</span>
-                    </div>
-                    <div class="shift-item">
-                        <span class="label">🌑 NUIT (22-06)</span>
-                        <span class="name" onclick="swap(2)">${currentTechs[2]}</span>
-                    </div>
-                </div>
-            `;
-            scheduleDiv.appendChild(card);
+            html += `<div class="day-card">
+                <div style="font-weight:bold; color:#27ae60; margin-bottom:5px;">${day}</div>
+                <div class="shift-info"><span>Matin:</span> <span class="name">${currentShifts[0]}</span></div>
+                <div class="shift-info"><span>Soir:</span> <span class="name">${currentShifts[1]}</span></div>
+                <div class="shift-info"><span>Nuit:</span> <span class="name">${currentShifts[2]}</span></div>
+            </div>`;
         });
+        scheduleDiv.innerHTML = html;
     }
 
-    function swap(idx) {
-        const newName = prompt("Changer le technicien pour ce shift :");
-        if (newName) {
-            let data = JSON.parse(localStorage.getItem('ingelec_weekly_data'));
-            data[idx] = newName;
-            localStorage.setItem('ingelec_weekly_data', JSON.stringify(data));
-            render();
+    function saveToArchive() {
+        const today = new Date();
+        const weekKey = "week_" + Math.floor(today / (1000 * 60 * 60 * 24 * 7));
+        let archive = JSON.parse(localStorage.getItem('ingelec_archive') || '{}');
+        
+        if (!archive[weekKey]) {
+            const currentShifts = getRotation(today);
+            archive[weekKey] = {
+                dateRange: "Semaine du " + today.toLocaleDateString(),
+                staff: currentShifts
+            };
+            localStorage.setItem('ingelec_archive', JSON.stringify(archive));
         }
     }
 
-    function resetToAuto() {
-        if(confirm("Voulez-vous revenir au planning automatique ?")) {
-            localStorage.removeItem('ingelec_weekly_data');
-            render();
+    function renderArchive() {
+        const archiveDiv = document.getElementById('archiveContent');
+        let archive = JSON.parse(localStorage.getItem('ingelec_archive') || '{}');
+        let html = "";
+        for (let key in archive) {
+            html += `<div class="archive-week">
+                <h4>${archive[key].dateRange}</h4>
+                Matin: ${archive[key].staff[0]} | Soir: ${archive[key].staff[1]} | Nuit: ${archive[key].staff[2]}
+            </div>`;
+        }
+        archiveDiv.innerHTML = html || "Aucun archive pour le moment.";
+    }
+
+    function toggleArchive() {
+        const content = document.getElementById('archiveContent');
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function resetAll() {
+        if(confirm("Effacer tout l'archive ?")) {
+            localStorage.removeItem('ingelec_archive');
+            location.reload();
         }
     }
 
-    render();
+    init();
 </script>
 </body>
 </html>
