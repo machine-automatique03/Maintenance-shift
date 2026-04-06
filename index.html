@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingelec Maintenance - Shift Tracker</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #e74c3c; --success: #27ae60; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .status-day { text-align: center; color: #7f8c8d; margin-bottom: 20px; font-weight: bold; font-size: 1.1em; }
+        .shift-box { position: relative; padding: 20px; margin: 15px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; border: 2px solid transparent; }
+        .matin { background: #fff9c4; border-left: 6px solid #fbc02d; }
+        .apres-midi { background: #e1f5fe; border-left: 6px solid #0288d1; }
+        .nuit { background: #f3e5f5; border-left: 6px solid #7b1fa2; }
+        .tech-name { font-size: 1.3em; font-weight: bold; cursor: pointer; color: #2c3e50; text-decoration: underline dotted #999; }
+        .shift-label { font-size: 0.9em; color: #555; font-weight: 600; }
+        .holiday { background: #ffebee; border: 2px dashed var(--accent); color: var(--accent); text-align: center; padding: 40px 20px; border-radius: 15px; font-size: 1.4em; font-weight: bold; }
+        .btn-reset { display: block; width: 100%; padding: 12px; margin-top: 20px; border: none; background: #95a5a6; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-reset:hover { background: #7f8c8d; }
+        .info-text { font-size: 0.8em; color: #888; text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Maintenance Shift</h2>
+    <div id="dayDisplay" class="status-day"></div>
+    
+    <div id="mainContent">
+        <div class="shift-box matin">
+            <span class="shift-label">☀️ MATIN (06:00 - 14:00)</span>
+            <span id="name-0" class="tech-name" onclick="changeName(0)"></span>
+        </div>
+        <div class="shift-box apres-midi">
+            <span class="shift-label">⛅ SOIR (14:00 - 22:00)</span>
+            <span id="name-1" class="tech-name" onclick="changeName(1)"></span>
+        </div>
+        <div class="shift-box nuit">
+            <span class="shift-label">🌑 NUIT (22:00 - 06:00)</span>
+            <span id="name-2" class="tech-name" onclick="changeName(2)"></span>
+        </div>
+        <p class="info-text">Cliquez sur un nom pour le modifier manuellement (Swap)</p>
+    </div>
+
+    <button class="btn-reset" onclick="resetToAuto()">Réinitialiser au Planning Auto</button>
+</div>
+
+<script>
+    function getAutoShift() {
+        // Date de référence: Lundi 6 Avril 2026 (Semaine 1)
+        const startDate = new Date('2026-04-06'); 
+        const today = new Date();
+        
+        // Calcul du nombre de semaines écoulées
+        const diffInDays = Math.floor((today - startDate) / (1000 * 3600 * 24));
+        const weekNum = Math.floor(diffInDays / 7);
+        const cycle = ((weekNum % 3) + 3) % 3; // Gestion des cycles
+
+        // Rotation: Matin, Soir, Nuit
+        if (cycle === 0) return ["Ismail", "Hamza", "Hicham"];
+        if (cycle === 1) return ["Hamza", "Hicham", "Ismail"];
+        return ["Hicham", "Ismail", "Hamza"];
+    }
+
+    function init() {
+        const today = new Date();
+        const isSunday = today.getDay() === 0;
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        
+        document.getElementById('dayDisplay').innerText = today.toLocaleDateString('fr-FR', options);
+
+        if (isSunday) {
+            document.getElementById('mainContent').innerHTML = '<div class="holiday">🏮 DIMANCHE : REPOS 🏮</div>';
+            return;
+        }
+
+        let currentShifts = JSON.parse(localStorage.getItem('ingelec_shifts'));
+        const savedWeek = localStorage.getItem('ingelec_week');
+        const thisWeek = Math.floor((today - new Date('2026-04-06')) / (1000 * 3600 * 24 * 7));
+
+        // Si nouvelle semaine ou pas de données, on reset à l'auto
+        if (!currentShifts || savedWeek != thisWeek) {
+            currentShifts = getAutoShift();
+            localStorage.setItem('ingelec_shifts', JSON.stringify(currentShifts));
+            localStorage.setItem('ingelec_week', thisWeek);
+        }
+
+        displayNames(currentShifts);
+    }
+
+    function displayNames(arr) {
+        document.getElementById('name-0').innerText = arr[0];
+        document.getElementById('name-1').innerText = arr[1];
+        document.getElementById('name-2').innerText = arr[2];
+    }
+
+    function changeName(index) {
+        const newName = prompt("Modifier le nom du technicien :");
+        if (newName && newName.trim() !== "") {
+            let currentShifts = JSON.parse(localStorage.getItem('ingelec_shifts'));
+            currentShifts[index] = newName;
+            localStorage.setItem('ingelec_shifts', JSON.stringify(currentShifts));
+            displayNames(currentShifts);
+        }
+    }
+
+    function resetToAuto() {
+        if(confirm("Voulez-vous revenir au planning automatique de cette semaine ?")) {
+            const auto = getAutoShift();
+            localStorage.setItem('ingelec_shifts', JSON.stringify(auto));
+            displayNames(auto);
+        }
+    }
+
+    // Lancement au démarrage
+    init();
+</script>
+</body>
+</html>
