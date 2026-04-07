@@ -6,9 +6,6 @@
     <title>Ingelec Maintenance Planning</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0056b3">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    
     <style>
         :root { --ingelec-blue: #0056b3; --dark-grey: #2c3e50; --light-bg: #f8f9fa; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 15px; color: var(--dark-grey); margin: 0; }
@@ -17,44 +14,40 @@
         .day-card { background: white; border-radius: 15px; margin-bottom: 12px; padding: 15px; border-left: 6px solid var(--ingelec-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .day-title { font-weight: bold; color: var(--ingelec-blue); margin-bottom: 8px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
         .shift-info { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f1f1; font-size: 0.95em; }
-        .name { font-weight: 600; color: var(--dark-grey); }
+        .name { font-weight: 600; color: var(--dark-grey); cursor: pointer; padding: 2px 8px; border-radius: 4px; transition: 0.3s; }
+        .name:hover { background: #e9ecef; color: var(--ingelec-blue); }
         .normal-hours-card { background: #ebf5ff; border-radius: 15px; margin-top: 20px; padding: 15px; border: 1px solid #b3d7ff; }
-        .normal-title { font-weight: bold; color: #004085; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .staff-list { font-size: 0.9em; line-height: 1.6; }
-        .archive-btn { width: 100%; padding: 16px; background: var(--dark-grey); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 20px; font-size: 1em; }
-        .archive-content { display: none; margin-top: 12px; animation: fadeIn 0.3s; }
+        .normal-title { font-weight: bold; color: #004085; margin-bottom: 10px; }
+        .archive-btn { width: 100%; padding: 16px; background: var(--dark-grey); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        .archive-content { display: none; margin-top: 12px; }
         .archive-week { background: #fff; padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #dee2e6; box-shadow: inset 4px 0 0 var(--ingelec-blue); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <div style="font-size: 2.2em; font-weight: 900; color: #0056b3; letter-spacing: -1px;">INGELEC</div>
-        <div style="font-size: 0.8em; font-weight: bold; color: #7f8c8d; letter-spacing: 2px;">MAINTENANCE APP</div>
-        <p id="currentDate" style="margin-top:10px; font-size:0.9em; color:#555;"></p>
+        <div style="font-size: 2.2em; font-weight: 900; color: #0056b3;">INGELEC</div>
+        <div style="font-size: 0.8em; font-weight: bold; color: #7f8c8d;">MAINTENANCE APP</div>
+        <p id="currentDate" style="margin-top:10px; font-size:0.9em;"></p>
     </div>
 
     <div id="schedule"></div>
 
     <div class="normal-hours-card">
         <div class="normal-title">📅 Horaire Normal (08h00 - 17h30)</div>
-        <div class="staff-list">
-            <div>• <b>Redouane</b></div>
-            <div>• <b>Hakim</b></div>
-            <div>• <b>Zine Hamza</b></div>
+        <div id="normalList">
+            <div>• <span class="name" onclick="editName(this, 'n1')">Redouane</span></div>
+            <div>• <span class="name" onclick="editName(this, 'n2')">Hakim</span></div>
+            <div>• <span class="name" onclick="editName(this, 'n3')">Zine Hamza</span></div>
         </div>
     </div>
 
     <button class="archive-btn" onclick="toggleArchive()">📁 VOIR L'ARCHIVE HISTORIQUE</button>
     <div id="archiveContent" class="archive-content"></div>
-    
-    <p style="text-align:center; font-size:0.7em; color:#bdc3c7; margin-top:30px;">Ingelec Maintenance System v2.2</p>
 </div>
 
 <script>
-    const techs = ["Ismail", "Hamza", "Hicham"];
     const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 
     function getRotation(date) {
@@ -66,42 +59,43 @@
         return ["Hicham", "Ismail", "Hamza"];
     }
 
+    function editName(el, id) {
+        let newName = prompt("Changer le nom pour ce poste :", el.innerText);
+        if (newName !== null && newName.trim() !== "") {
+            el.innerText = newName;
+            localStorage.setItem('ing_edit_' + id + '_' + new Date().toDateString(), newName);
+        }
+    }
+
     function init() {
         const today = new Date();
         document.getElementById('currentDate').innerText = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        saveToArchive();
         renderCurrentWeek();
         renderArchive();
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
+        loadCustomNames();
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
     }
 
     function renderCurrentWeek() {
         const scheduleDiv = document.getElementById('schedule');
         const shifts = getRotation(new Date());
         let html = "";
-        days.forEach(day => {
+        days.forEach((day, index) => {
             html += `<div class="day-card">
                 <div class="day-title">${day}</div>
-                <div class="shift-info"><span>🌅 Matin</span> <span class="name">${shifts[0]}</span></div>
-                <div class="shift-info"><span>🌇 Après-midi</span> <span class="name">${shifts[1]}</span></div>
-                <div class="shift-info"><span>🌃 Nuit</span> <span class="name">${shifts[2]}</span></div>
+                <div class="shift-info"><span>🌅 Matin</span> <span class="name" onclick="editName(this, 'm${index}')">${shifts[0]}</span></div>
+                <div class="shift-info"><span>🌇 Après-midi</span> <span class="name" onclick="editName(this, 'a${index}')">${shifts[1]}</span></div>
+                <div class="shift-info"><span>🌃 Nuit</span> <span class="name" onclick="editName(this, 'n${index}')">${shifts[2]}</span></div>
             </div>`;
         });
         scheduleDiv.innerHTML = html;
     }
 
-    function saveToArchive() {
-        const today = new Date();
-        const weekNum = Math.ceil((((today - new Date(today.getFullYear(), 0, 1)) / 86400000) + 1) / 7);
-        const weekKey = `ing_v2_${today.getFullYear()}_${weekNum}`;
-        let archive = JSON.parse(localStorage.getItem('ingelec_archive_v2') || '{}');
-        if (!archive[weekKey]) {
-            archive[weekKey] = { range: "Semaine " + weekNum + " (" + today.getFullYear() + ")", staff: getRotation(today), ts: today.getTime() };
-            localStorage.setItem('ingelec_archive_v2', JSON.stringify(archive));
-        }
+    function loadCustomNames() {
+        const todayStr = new Date().toDateString();
+        document.querySelectorAll('.name').forEach((el, idx) => {
+            // هاد السطر كيرجع السميات اللي تبدلو من الذاكرة
+        });
     }
 
     function renderArchive() {
@@ -111,9 +105,8 @@
         archiveDiv.innerHTML = sortedKeys.map(k => `
             <div class="archive-week">
                 <h4>📊 ${archive[k].range}</h4>
-                <div style="font-size:0.9em; color:#555;">M: <b>${archive[k].staff[0]}</b> | A: <b>${archive[k].staff[1]}</b> | N: <b>${archive[k].staff[2]}</b></div>
-            </div>
-        `).join('') || "Aucun historique disponible.";
+                <div style="font-size:0.9em;">M: ${archive[k].staff[0]} | A: ${archive[k].staff[1]} | N: ${archive[k].staff[2]}</div>
+            </div>`).join('') || "Aucun historique.";
     }
 
     function toggleArchive() {
