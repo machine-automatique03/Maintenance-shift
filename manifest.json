@@ -1,23 +1,17 @@
 {
-  "name": "Ingelec Maintenance Planning",
+  "name": "Ingelec Maintenance",
   "short_name": "Ingelec",
-  "description": "Planning de rotation maintenance Ingelec",
-  "start_url": "./index.html",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0056b3",
+  "description": "App de maintenance Ingelec",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3067/3067451.png",
+      "src": "https://www.gstatic.com/images/branding/product/2x/contacts_512dp.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/3067/3067451.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }
