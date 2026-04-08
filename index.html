@@ -3,48 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingelec Maintenance Planning</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0056b3">
+    <title>Ingelec Management</title>
     <style>
         :root { --ingelec-blue: #0056b3; --dark-grey: #2c3e50; --light-bg: #f8f9fa; --gold: #f39c12; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 15px; color: var(--dark-grey); margin: 0; }
-        .container { max-width: 500px; margin: 0 auto; }
-        .header { text-align: center; background: white; padding: 20px; border-radius: 0 0 20px 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--ingelec-blue); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 0; margin: 0; color: var(--dark-grey); }
         
-        /* New Search Box Style */
-        .search-section { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 2px solid var(--ingelec-blue); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .search-title { font-weight: bold; color: var(--ingelec-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        input[type="date"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; font-size: 1em; box-sizing: border-box; outline: none; }
-        #searchResult { display: none; margin-top: 15px; padding: 10px; background: #f0f7ff; border-radius: 10px; border-left: 5px solid var(--gold); }
+        /* واجهة اختيار الخدمات */
+        #main-menu {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--light-bg); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .menu-header { margin-bottom: 40px; text-align: center; }
+        .service-btn {
+            width: 80%; max-width: 300px; padding: 20px; margin: 10px;
+            border: none; border-radius: 15px; background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-size: 1.1em;
+            font-weight: bold; color: var(--dark-grey); cursor: pointer;
+            transition: 0.3s; border-left: 8px solid #ddd;
+        }
+        .service-btn:active { transform: scale(0.95); }
+        .btn-maintenance { border-left-color: var(--ingelec-blue); color: var(--ingelec-blue); }
+        .btn-production { border-left-color: #27ae60; }
+        .btn-qualite { border-left-color: #e67e22; }
 
+        /* ستايل التطبيق الأصلي */
+        .container { max-width: 500px; margin: 0 auto; padding: 15px; display: none; }
+        .header { text-align: center; background: white; padding: 20px; border-radius: 0 0 20px 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--ingelec-blue); }
+        .search-section { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 2px solid var(--ingelec-blue); }
+        input[type="date"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        #searchResult { display: none; margin-top: 15px; padding: 10px; background: #f0f7ff; border-radius: 10px; border-left: 5px solid var(--gold); }
         .day-card { background: white; border-radius: 15px; margin-bottom: 12px; padding: 15px; border-left: 6px solid var(--ingelec-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .day-title { font-weight: bold; color: var(--ingelec-blue); margin-bottom: 8px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
         .shift-info { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f1f1; font-size: 0.95em; }
-        .name { font-weight: 600; color: var(--dark-grey); cursor: pointer; padding: 2px 8px; border-radius: 4px; transition: 0.3s; }
-        .name:hover { background: #e9ecef; color: var(--ingelec-blue); }
-        .normal-hours-card { background: #ebf5ff; border-radius: 15px; margin-top: 20px; padding: 15px; border: 1px solid #b3d7ff; }
-        .normal-title { font-weight: bold; color: #004085; margin-bottom: 10px; }
-        .archive-btn { width: 100%; padding: 16px; background: var(--dark-grey); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 20px; }
-        .archive-content { display: none; margin-top: 12px; }
-        .archive-week { background: #fff; padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #dee2e6; box-shadow: inset 4px 0 0 var(--ingelec-blue); }
+        .name { font-weight: 600; color: var(--dark-grey); }
+        .back-btn { background: none; border: none; color: var(--ingelec-blue); font-weight: bold; cursor: pointer; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div id="main-menu">
+    <div class="menu-header">
+        <div style="font-size: 3em; font-weight: 900; color: var(--ingelec-blue);">INGELEC</div>
+        <div style="font-weight: bold; color: #7f8c8d;">SÉLECTIONNER UN SERVICE</div>
+    </div>
+    <button class="service-btn btn-maintenance" onclick="openService('maintenance')">⚙️ Service Maintenance</button>
+    <button class="service-btn btn-production" onclick="alert('Service Production en cours de développement...')">🏭 Service Production</button>
+    <button class="service-btn btn-qualite" onclick="alert('Service Qualité en cours de développement...')">✅ Service Qualité</button>
+</div>
+
+<div id="maintenance-content" class="container">
+    <button class="back-btn" onclick="goBack()">← Retour au menu</button>
+    
     <div class="header">
         <div style="font-size: 2.2em; font-weight: 900; color: #0056b3;">INGELEC</div>
-        <div style="font-size: 0.8em; font-weight: bold; color: #7f8c8d;">MAINTENANCE APP</div>
+        <div style="font-size: 0.8em; font-weight: bold; color: #7f8c8d;">MAINTENANCE PLANNING</div>
         <p id="currentDate" style="margin-top:10px; font-size:0.9em;"></p>
     </div>
 
     <div class="search-section">
-        <div class="search-title">🔍 البحث عن بلانينغ يوم معين</div>
+        <div style="font-weight:bold; margin-bottom:10px; color:var(--ingelec-blue)">🔍 Recherche de Planning</div>
         <input type="date" id="inputDate" onchange="searchByDate()">
-        
         <div id="searchResult">
-            <div id="resDateTitle" style="font-weight: bold; color: #2c3e50; margin-bottom: 8px; text-transform: capitalize;"></div>
+            <div id="resDateTitle" style="font-weight: bold; margin-bottom: 8px; text-transform: capitalize;"></div>
             <div class="shift-info"><span>🌅 Matin</span> <span id="resMatin" class="name"></span></div>
             <div class="shift-info"><span>🌇 Après-midi</span> <span id="resAprem" class="name"></span></div>
             <div class="shift-info"><span>🌃 Nuit</span> <span id="resNuit" class="name"></span></div>
@@ -52,102 +73,63 @@
     </div>
 
     <div id="schedule"></div>
-
-    <div class="normal-hours-card">
-        <div class="normal-title">📅 Horaire Normal (08h00 - 17h30)</div>
-        <div id="normalList">
-            <div>• <span class="name" onclick="editName(this, 'n1')">Redouane</span></div>
-            <div>• <span class="name" onclick="editName(this, 'n2')">Hakim</span></div>
-            <div>• <span class="name" onclick="editName(this, 'n3')">Zine Hamza</span></div>
-        </div>
-    </div>
-
-    <button class="archive-btn" onclick="toggleArchive()">📁 VOIR L'ARCHIVE HISTORIQUE</button>
-    <div id="archiveContent" class="archive-content"></div>
 </div>
 
 <script>
     const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 
-    // قاعدة الحساب اللي كنتي خدام بيها
+    // وظائف التنقل
+    function openService(service) {
+        if(service === 'maintenance') {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('maintenance-content').style.display = 'block';
+            initMaintenance();
+        }
+    }
+
+    function goBack() {
+        document.getElementById('main-menu').style.display = 'flex';
+        document.getElementById('maintenance-content').style.display = 'none';
+    }
+
+    // لورجيك ديال Maintenance
     function getRotation(date) {
         const ref = new Date('2026-04-06'); 
         const diffWeeks = Math.floor((date - ref) / 604800000);
         const cycle = ((diffWeeks % 3) + 3) % 3;
-        if (cycle === 0) return ["Ismail", "Hamza", "Hicham"];
-        if (cycle === 1) return ["Hamza", "Hicham", "Ismail"];
-        return ["Hicham", "Ismail", "Hamza"];
+        const teams = [["Ismail", "Hamza", "Hicham"], ["Hamza", "Hicham", "Ismail"], ["Hicham", "Ismail", "Hamza"]];
+        return teams[cycle];
     }
 
-    // الدالة الجديدة للبحث بالتاريخ
     function searchByDate() {
         const dateVal = document.getElementById('inputDate').value;
-        const resultDiv = document.getElementById('searchResult');
-        
         if (dateVal) {
             const selectedDate = new Date(dateVal);
             const shifts = getRotation(selectedDate);
-            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            
-            document.getElementById('resDateTitle').innerText = "📅 " + selectedDate.toLocaleDateString('fr-FR', options);
+            document.getElementById('resDateTitle').innerText = "📅 " + selectedDate.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
             document.getElementById('resMatin').innerText = shifts[0];
             document.getElementById('resAprem').innerText = shifts[1];
             document.getElementById('resNuit').innerText = shifts[2];
-            
-            resultDiv.style.display = 'block';
-        } else {
-            resultDiv.style.display = 'none';
+            document.getElementById('searchResult').style.display = 'block';
         }
     }
 
-    function editName(el, id) {
-        let newName = prompt("Changer le nom pour ce poste :", el.innerText);
-        if (newName !== null && newName.trim() !== "") {
-            el.innerText = newName;
-            localStorage.setItem('ing_edit_' + id + '_' + new Date().toDateString(), newName);
-        }
-    }
-
-    function init() {
+    function initMaintenance() {
         const today = new Date();
         document.getElementById('currentDate').innerText = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        renderCurrentWeek();
-        renderArchive();
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-    }
-
-    function renderCurrentWeek() {
-        const scheduleDiv = document.getElementById('schedule');
-        const shifts = getRotation(new Date());
+        
+        const shifts = getRotation(today);
         let html = "";
         days.forEach((day, index) => {
             html += `<div class="day-card">
                 <div class="day-title">${day}</div>
-                <div class="shift-info"><span>🌅 Matin</span> <span class="name" onclick="editName(this, 'm${index}')">${shifts[0]}</span></div>
-                <div class="shift-info"><span>🌇 Après-midi</span> <span class="name" onclick="editName(this, 'a${index}')">${shifts[1]}</span></div>
-                <div class="shift-info"><span>🌃 Nuit</span> <span class="name" onclick="editName(this, 'n${index}')">${shifts[2]}</span></div>
+                <div class="shift-info"><span>🌅 Matin</span> <span class="name">${shifts[0]}</span></div>
+                <div class="shift-info"><span>🌇 Après-midi</span> <span class="name">${shifts[1]}</span></div>
+                <div class="shift-info"><span>🌃 Nuit</span> <span class="name">${shifts[2]}</span></div>
             </div>`;
         });
-        scheduleDiv.innerHTML = html;
+        document.getElementById('schedule').innerHTML = html;
     }
-
-    function renderArchive() {
-        const archiveDiv = document.getElementById('archiveContent');
-        let archive = JSON.parse(localStorage.getItem('ingelec_archive_v2') || '{}');
-        const sortedKeys = Object.keys(archive).sort((a,b) => archive[b].ts - archive[a].ts);
-        archiveDiv.innerHTML = sortedKeys.map(k => `
-            <div class="archive-week">
-                <h4>📊 ${archive[k].range}</h4>
-                <div style="font-size:0.9em;">M: ${archive[k].staff[0]} | A: ${archive[k].staff[1]} | N: ${archive[k].staff[2]}</div>
-            </div>`).join('') || "Aucun historique.";
-    }
-
-    function toggleArchive() {
-        const content = document.getElementById('archiveContent');
-        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-    }
-
-    init();
 </script>
 </body>
 </html>
