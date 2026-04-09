@@ -3,89 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingelec Maintenance Planning</title>
+    <title>Ingelec Maintenance</title>
     <style>
         :root { --ingelec-blue: #0056b3; --dark-grey: #2c3e50; --light-bg: #f8f9fa; --gold: #f39c12; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 0; margin: 0; color: var(--dark-grey); }
         
-        .container { max-width: 500px; margin: 0 auto; padding: 15px; }
-        
-        .header { 
-            text-align: center; 
-            background: white; 
-            padding: 20px; 
-            border-radius: 0 0 20px 20px; 
-            margin-bottom: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            border-top: 5px solid var(--ingelec-blue); 
+        /* واجهة اختيار الخدمات (Main Menu) */
+        #main-menu {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--light-bg); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-
-        .search-section { 
-            background: white; 
-            border-radius: 15px; 
-            padding: 15px; 
-            margin-bottom: 15px; 
-            border: 2px solid var(--ingelec-blue); 
+        .menu-header { margin-bottom: 40px; text-align: center; }
+        .service-btn {
+            width: 80%; max-width: 300px; padding: 20px; margin: 10px;
+            border: none; border-radius: 15px; background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-size: 1.1em;
+            font-weight: bold; color: var(--dark-grey); cursor: pointer;
+            transition: 0.3s; border-left: 8px solid #ddd;
         }
+        .btn-maintenance { border-left-color: var(--ingelec-blue); color: var(--ingelec-blue); }
+        .btn-production { border-left-color: #27ae60; }
+        .btn-qualite { border-left-color: #e67e22; }
 
-        input[type="date"] { 
-            width: 100%; 
-            padding: 12px; 
-            border-radius: 10px; 
-            border: 1px solid #ddd; 
-            box-sizing: border-box; 
-            font-family: inherit; 
-            font-size: 1rem;
-        }
-
-        #searchResult { 
-            display: none; 
-            margin-top: 15px; 
-            padding: 15px; 
-            background: #f0f7ff; 
-            border-radius: 10px; 
-            border-left: 5px solid var(--gold); 
-        }
-
-        .day-card { 
-            background: white; 
-            border-radius: 15px; 
-            margin-bottom: 12px; 
-            padding: 15px; 
-            border-left: 6px solid var(--ingelec-blue); 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-        }
-
-        .day-title { 
-            font-weight: bold; 
-            color: var(--ingelec-blue); 
-            margin-bottom: 8px; 
-            border-bottom: 1px dashed #ddd; 
-            padding-bottom: 5px; 
-            text-transform: capitalize;
-        }
-
-        .shift-info { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 8px 0; 
-            border-bottom: 1px solid #f1f1f1; 
-            font-size: 0.95em; 
-        }
-
-        .shift-info:last-child { border-bottom: none; }
-        .name { font-weight: 600; color: var(--dark-grey); }
+        /* ستايل التطبيق الأصلي */
+        .container { max-width: 500px; margin: 0 auto; padding: 15px; display: none; }
+        .header { text-align: center; background: white; padding: 20px; border-radius: 0 0 20px 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--ingelec-blue); }
+        .search-section { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 2px solid var(--ingelec-blue); }
+        input[type="date"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
+        #searchResult { display: none; margin-top: 15px; padding: 10px; background: #f0f7ff; border-radius: 10px; border-left: 5px solid var(--gold); }
+        .day-card { background: white; border-radius: 15px; margin-bottom: 12px; padding: 15px; border-left: 6px solid var(--ingelec-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .day-title { font-weight: bold; color: var(--ingelec-blue); margin-bottom: 8px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
+        .shift-info { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f1f1; font-size: 0.95em; }
+        .name { font-weight: 600; }
+        .back-btn { background: none; border: none; color: var(--ingelec-blue); font-weight: bold; cursor: pointer; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div id="main-menu">
+    <div class="menu-header">
+        <div style="font-size: 2.5em; font-weight: 900; color: var(--ingelec-blue);">INGELEC</div>
+        <div style="font-weight: bold; color: #7f8c8d;">SÉLECTIONNER UN SERVICE</div>
+    </div>
+    <button class="service-btn btn-maintenance" onclick="openService('maintenance')">⚙️ Service Maintenance</button>
+    <button class="service-btn btn-production" onclick="alert('En développement...')">🏭 Service Production</button>
+    <button class="service-btn btn-qualite" onclick="alert('En développement...')">✅ Service Qualité</button>
+</div>
+
+<div id="maintenance-content" class="container">
+    <button class="back-btn" onclick="goBack()">← Retour au menu</button>
+    
     <div class="header">
         <div style="font-size: 2.2em; font-weight: 900; color: #0056b3;">INGELEC</div>
         <div style="font-size: 0.8em; font-weight: bold; color: #7f8c8d;">MAINTENANCE PLANNING</div>
-        <p id="currentDateDisplay" style="margin-top:10px; font-size:0.9em; color: var(--gold); font-weight: bold;"></p>
+        <p id="currentDate" style="margin-top:10px; font-size:0.9em;"></p>
     </div>
 
     <div class="search-section">
-        <div style="font-weight:bold; margin-bottom:10px; color:var(--ingelec-blue)">🔍 Consulter une date</div>
-        <input
+        <div style="font-weight:bold; margin-bottom:10px; color:var(--ingelec-blue)">🔍 Recherche de Planning</div>
+        <input type="date" id="inputDate" onchange="searchByDate()">
+        <div id="searchResult">
+            <div id="resDateTitle" style="font-weight: bold; margin-bottom: 8px; text-transform: capitalize;"></div>
+            <div class="shift-info"><span>🌅 Matin</span> <span id="resMatin" class="name"></span></div>
+            <div class="shift-info"><span>🌇 Après-midi</span> <span id="resAprem" class="name"></span></div>
+            <div class="shift-info"><span>🌃 Nuit</span> <span id="resNuit" class="name"></span></div>
+        </div>
+    </div>
+
+    <div id="schedule"></div>
+</div>
+
+<script>
+    const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+
+    function openService(service) {
+        if(service === 'maintenance') {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('maintenance-content').style.display = 'block';
+            initMaintenance();
+        }
+    }
+
+    function goBack() {
+        document.getElementById('main-menu').style.display = 'flex';
+        document.getElementById('maintenance-content').style.display = 'none';
+    }
+
+    function getRotation(date) {
+        const ref = new Date('2026-04-06'); 
+        const diffWeeks = Math.floor((date - ref) / 604800000);
+        const cycle = ((diffWeeks % 3) + 3) % 3;
+        const teams = [["Ismail", "Hamza", "Hicham"], ["Hamza", "Hicham", "Ismail"], ["Hicham", "Ismail", "Hamza"]];
+        return teams[cycle];
+    }
+
+    function searchByDate() {
+        const dateVal = document.getElementById('inputDate').value;
+        if (dateVal) {
+            const selectedDate = new Date(dateVal);
+            const shifts = getRotation(selectedDate);
+            document.getElementById('resDateTitle').innerText = "📅 " + selectedDate.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+            document.getElementById('resMatin').innerText = shifts[0];
