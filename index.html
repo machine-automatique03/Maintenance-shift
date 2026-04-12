@@ -3,37 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingelec Management - Pro</title>
+    <title>Ingelec Management Pro - Custom</title>
     <style>
         :root { --ingelec-blue: #0056b3; --dark-grey: #2c3e50; --light-bg: #f8f9fa; --gold: #f39c12; --success: #27ae60; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 0; margin: 0; color: var(--dark-grey); }
         
-        #main-menu {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--light-bg); z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .menu-header { margin-bottom: 40px; text-align: center; }
-        .service-btn {
-            width: 85%; max-width: 350px; padding: 20px; margin: 10px;
-            border: none; border-radius: 15px; background: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-size: 1.1em;
-            font-weight: bold; color: var(--dark-grey); cursor: pointer;
-            transition: 0.3s; border-left: 8px solid #ddd; display: flex; align-items: center; gap: 15px;
-        }
-        .service-btn:active { transform: scale(0.95); }
+        #main-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--light-bg); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .service-btn { width: 85%; max-width: 350px; padding: 20px; margin: 10px; border: none; border-radius: 15px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-size: 1.1em; font-weight: bold; cursor: pointer; border-left: 8px solid #ddd; }
         .btn-maintenance { border-left-color: var(--ingelec-blue); color: var(--ingelec-blue); }
-        .btn-production { border-left-color: var(--success); }
-        .btn-qualite { border-left-color: #e67e22; }
 
         .container { max-width: 500px; margin: 0 auto; padding: 15px; display: none; }
         .header { text-align: center; background: white; padding: 20px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--ingelec-blue); }
         
-        .search-section { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 2px solid var(--ingelec-blue); }
-        input[type="date"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1em; }
-        
-        #searchResult { display: none; margin-top: 15px; padding: 15px; background: #fff9e6; border-radius: 10px; border: 1px solid var(--gold); }
-        
+        /* القسم الخاص بتعديل الأسماء */
+        .editable-name { cursor: pointer; color: var(--ingelec-blue); text-decoration: underline dotted; transition: 0.2s; }
+        .editable-name:hover { color: var(--gold); }
+        .edit-icon { font-size: 0.8em; margin-left: 5px; opacity: 0.5; }
+
         .week-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .week-tab { flex: 1; padding: 10px; text-align: center; background: #ddd; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; }
         .week-tab.active { background: var(--ingelec-blue); color: white; }
@@ -44,39 +30,31 @@
         
         .shift-info { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f1f1; font-size: 0.95em; }
         .shift-info:last-child { border-bottom: none; }
-        .name { font-weight: 600; color: var(--dark-grey); }
-        .back-btn { background: #eee; border: none; padding: 8px 15px; border-radius: 8px; color: var(--dark-grey); font-weight: bold; cursor: pointer; margin-bottom: 15px; }
+        .name { font-weight: 600; }
+
+        /* ستايل التوقيت العادي */
+        .normal-staff-card { background: #eef2f7; border-radius: 15px; padding: 15px; margin-top: 20px; border: 1px solid #ccd6e0; }
+        .normal-title { font-weight: bold; color: #34495e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        
+        .back-btn { background: #eee; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div id="main-menu">
-    <div class="menu-header">
-        <div style="font-size: 3.5em; font-weight: 900; color: var(--ingelec-blue); letter-spacing: -2px;">INGELEC</div>
-        <div style="font-weight: bold; color: #7f8c8d; margin-top: -10px;">GMAO MOBILE v2.0</div>
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div style="font-size: 3.5em; font-weight: 900; color: var(--ingelec-blue);">INGELEC</div>
+        <div style="font-weight: bold; color: #7f8c8d;">MAINTENANCE DASHBOARD</div>
     </div>
-    <button class="service-btn btn-maintenance" onclick="openService('maintenance')">⚙️ Service Maintenance</button>
-    <button class="service-btn btn-production" onclick="alert('Service Production en construction...')">🏭 Service Production</button>
-    <button class="service-btn btn-qualite" onclick="alert('Service Qualité en construction...')">✅ Service Qualité</button>
+    <button class="service-btn btn-maintenance" onclick="openService('maintenance')">⚙️ Planning Maintenance</button>
 </div>
 
 <div id="maintenance-content" class="container">
-    <button class="back-btn" onclick="goBack()">← Menu Principal</button>
+    <button class="back-btn" onclick="goBack()">← Retour</button>
     
     <div class="header">
-        <div style="font-size: 2em; font-weight: 900; color: var(--ingelec-blue);">MAINTENANCE</div>
-        <p id="currentDateDisplay" style="margin:5px 0; color: #7f8c8d; font-weight: bold;"></p>
-    </div>
-
-    <div class="search-section">
-        <div style="font-weight:bold; margin-bottom:10px; color:var(--ingelec-blue)">🔍 Vérifier une date précise :</div>
-        <input type="date" id="inputDate" onchange="searchByDate()">
-        <div id="searchResult">
-            <div id="resDateTitle" style="font-weight: bold; margin-bottom: 8px; color: var(--gold);"></div>
-            <div class="shift-info"><span>🌅 Matin (06-14)</span> <span id="resMatin" class="name"></span></div>
-            <div class="shift-info"><span>🌇 Aprem (14-22)</span> <span id="resAprem" class="name"></span></div>
-            <div class="shift-info"><span>🌃 Nuit (22-06)</span> <span id="resNuit" class="name"></span></div>
-        </div>
+        <div style="font-size: 1.8em; font-weight: 900; color: var(--ingelec-blue);">PLANNING EQUIPE</div>
+        <p id="currentDateDisplay" style="margin:5px 0; color: #7f8c8d; font-size: 0.9em;"></p>
     </div>
 
     <div class="week-selector">
@@ -85,26 +63,39 @@
     </div>
 
     <div id="schedule"></div>
+
+    <div class="normal-staff-card">
+        <div class="normal-title">👨‍🔧 Horaire Normal (08:00 - 17:30)</div>
+        <div class="shift-info"><span>Equipe :</span> <span class="name">Redouane, Hakim, Hamza Zayne</span></div>
+        <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">* Du Lundi au Vendredi / Samedi (08:00 - 12:00)</div>
+    </div>
+
+    <p style="text-align: center; font-size: 0.7em; color: #bbb; margin-top: 20px;">Cliquez على السمية باش تبدلها إلا كاين شي Changement</p>
 </div>
 
 <script>
-    // الإعدادات المرجعية (Reference: Monday April 6th, 2026)
     const REF_DATE = new Date('2026-04-06');
     const TEAMS_CYCLE = [
-        ["Ismail", "Hamza", "Hicham"], // Week 0
-        ["Hamza", "Hicham", "Ismail"], // Week 1
-        ["Hicham", "Ismail", "Hamza"]  // Week 2
+        ["Ismail", "Hamza", "Hicham"],
+        ["Hamza", "Hicham", "Ismail"],
+        ["Hicham", "Ismail", "Hamza"]
     ];
 
     function getShiftsForDate(targetDate) {
-        // حساب شمن سيمانة حنا فيها بالنسبة للمرجع
         const diffTime = targetDate - REF_DATE;
         const diffWeeks = Math.floor(diffTime / (7 * 24 * 60 * 60 * 1000));
         const cycleIndex = ((diffWeeks % 3) + 3) % 3;
-        
-        // في هاد الموديل، الفرقاء كيدوروا كل سيمانة، واليوم مابدلش الترتيب
-        // (إذا كان الفريق كيتبدل وسط السيمانة خاص نعدلو هاد اللوجيك)
-        return TEAMS_CYCLE[cycleIndex];
+        return [...TEAMS_CYCLE[cycleIndex]]; 
+    }
+
+    // خاصية التعديل اليدوي
+    function editName(element) {
+        const currentName = element.innerText.replace(' ✏️', '');
+        const newName = prompt("Modifier le nom pour ce shift :", currentName);
+        if (newName !== null && newName.trim() !== "") {
+            element.innerHTML = newName + ' <span class="edit-icon">✏️</span>';
+            element.style.color = "#e67e22"; // كيتغير اللون باش نعرفوه تبدل يدويا
+        }
     }
 
     function openService(service) {
@@ -120,19 +111,6 @@
         document.getElementById('maintenance-content').style.display = 'none';
     }
 
-    function searchByDate() {
-        const val = document.getElementById('inputDate').value;
-        if(val) {
-            const d = new Date(val);
-            const shifts = getShiftsForDate(d);
-            document.getElementById('resDateTitle').innerText = "📅 " + d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-            document.getElementById('resMatin').innerText = shifts[0];
-            document.getElementById('resAprem').innerText = shifts[1];
-            document.getElementById('resNuit').innerText = shifts[2];
-            document.getElementById('searchResult').style.display = 'block';
-        }
-    }
-
     function switchWeek(offset) {
         document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
         if(offset === 0) document.getElementById('tabCurrent').classList.add('active');
@@ -143,15 +121,14 @@
     function renderWeek(weekOffset) {
         const scheduleDiv = document.getElementById('schedule');
         const today = new Date();
-        document.getElementById('currentDateDisplay').innerText = today.toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+        document.getElementById('currentDateDisplay').innerText = today.toLocaleDateString('fr-FR', {weekday: 'long', day:'numeric', month:'long'});
         
-        // حساب بداية الأسبوع (الاثنين)
         let startOfWeek = new Date();
         const dayNum = startOfWeek.getDay() || 7;
         startOfWeek.setDate(startOfWeek.getDate() - (dayNum - 1) + (weekOffset * 7));
 
         let html = "";
-        for(let i=0; i<6; i++) { // من الاثنين للسبت
+        for(let i=0; i<6; i++) {
             let currentDay = new Date(startOfWeek);
             currentDay.setDate(startOfWeek.getDate() + i);
             
@@ -166,9 +143,18 @@
                         <span style="text-transform: capitalize;">${dayName}</span>
                         <span style="font-size: 0.8em; opacity: 0.7;">${dayDate}</span>
                     </div>
-                    <div class="shift-info"><span>🌅 Matin</span> <span class="name">${shifts[0]}</span></div>
-                    <div class="shift-info"><span>🌇 Après-midi</span> <span class="name">${shifts[1]}</span></div>
-                    <div class="shift-info"><span>🌃 Nuit</span> <span class="name">${shifts[2]}</span></div>
+                    <div class="shift-info">
+                        <span>🌅 Matin</span> 
+                        <span class="name editable-name" onclick="editName(this)">${shifts[0]} <span class="edit-icon">✏️</span></span>
+                    </div>
+                    <div class="shift-info">
+                        <span>🌇 Après-midi</span> 
+                        <span class="name editable-name" onclick="editName(this)">${shifts[1]} <span class="edit-icon">✏️</span></span>
+                    </div>
+                    <div class="shift-info">
+                        <span>🌃 Nuit</span> 
+                        <span class="name editable-name" onclick="editName(this)">${shifts[2]} <span class="edit-icon">✏️</span></span>
+                    </div>
                 </div>`;
         }
         scheduleDiv.innerHTML = html;
