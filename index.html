@@ -3,39 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingelec Maintenance Pro</title>
+    <title>Ingelec Maintenance</title>
     <style>
-        :root { --ingelec-blue: #0056b3; --dark-grey: #2c3e50; --light-bg: #f8f9fa; --gold: #f39c12; --success: #27ae60; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 0; margin: 0; color: var(--dark-grey); line-height: 1.4; }
+        :root { --ingelec-blue: #0056b3; --dark-grey: #2c3e50; --light-bg: #f8f9fa; --gold: #f39c12; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); padding: 0; margin: 0; color: var(--dark-grey); }
         
+        /* Menu Principal */
         #main-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--light-bg); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .service-btn { width: 85%; max-width: 350px; padding: 20px; margin: 10px; border: none; border-radius: 15px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-size: 1.1em; font-weight: bold; cursor: pointer; border-left: 8px solid #ddd; }
-        .btn-maintenance { border-left-color: var(--ingelec-blue); color: var(--ingelec-blue); }
+        .service-btn { width: 85%; max-width: 350px; padding: 20px; margin: 10px; border: none; border-radius: 15px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-size: 1.1em; font-weight: bold; cursor: pointer; border-left: 8px solid var(--ingelec-blue); color: var(--ingelec-blue); }
 
+        /* Container */
         .container { max-width: 500px; margin: 0 auto; padding: 15px; display: none; }
         .header { text-align: center; background: white; padding: 20px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--ingelec-blue); }
         
+        /* Search */
         .search-section { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 2px solid var(--ingelec-blue); }
         input[type="date"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1em; box-sizing: border-box; }
         #searchResult { display: none; margin-top: 15px; padding: 15px; background: #fff9e6; border-radius: 10px; border: 1px solid var(--gold); }
 
-        .editable-name { cursor: pointer; color: var(--ingelec-blue); text-decoration: underline dotted; }
-        .edit-icon { font-size: 0.8em; margin-left: 5px; opacity: 0.5; }
-
+        /* Planning Cards */
         .week-selector { display: flex; gap: 10px; margin-bottom: 15px; }
-        .week-tab { flex: 1; padding: 10px; text-align: center; background: #ddd; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; }
+        .week-tab { flex: 1; padding: 10px; text-align: center; background: #ddd; border-radius: 10px; cursor: pointer; font-weight: bold; }
         .week-tab.active { background: var(--ingelec-blue); color: white; }
 
         .day-card { background: white; border-radius: 15px; margin-bottom: 12px; padding: 15px; border-left: 6px solid var(--ingelec-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .day-card.today { border-left-color: var(--gold); background: #fffdf5; }
-        .day-title { font-weight: bold; color: var(--ingelec-blue); margin-bottom: 8px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; display: flex; justify-content: space-between; }
+        .day-card.today { border-left-color: var(--gold); }
+        .day-title { font-weight: bold; color: var(--ingelec-blue); margin-bottom: 8px; border-bottom: 1px dashed #ddd; display: flex; justify-content: space-between; }
         
-        .shift-info { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f1f1; font-size: 0.95em; }
-        .name { font-weight: 600; }
+        .shift-info { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f1f1; }
+        .name { font-weight: 600; cursor: pointer; }
+        .edit-icon { font-size: 0.8em; opacity: 0.4; margin-left: 4px; }
 
+        /* Normal Team */
         .normal-staff-card { background: #eef2f7; border-radius: 15px; padding: 15px; margin-top: 20px; border: 1px solid #ccd6e0; }
-        .normal-title { font-weight: bold; color: #34495e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        
         .back-btn { background: #eee; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; font-weight: bold; }
     </style>
 </head>
@@ -46,3 +46,95 @@
         <div style="font-size: 3.5em; font-weight: 900; color: var(--ingelec-blue);">INGELEC</div>
         <div style="font-weight: bold; color: #7f8c8d;">MAINTENANCE SYSTEM</div>
     </div>
+    <button class="service-btn" onclick="openService()">⚙️ Planning Maintenance</button>
+</div>
+
+<div id="maintenance-content" class="container">
+    <button class="back-btn" onclick="goBack()">← Retour</button>
+    
+    <div class="header">
+        <div style="font-size: 1.8em; font-weight: 900; color: var(--ingelec-blue);">MAINTENANCE</div>
+        <p id="currentDateDisplay" style="margin:5px 0; color: #7f8c8d;"></p>
+    </div>
+
+    <div class="search-section">
+        <input type="date" id="inputDate" onchange="searchByDate()">
+        <div id="searchResult">
+            <div id="resDateTitle" style="font-weight: bold; margin-bottom: 8px; color: var(--gold);"></div>
+            <div class="shift-info"><span>🌅 Matin</span> <span class="name" onclick="editName(this)" id="resMatin"></span></div>
+            <div class="shift-info"><span>🌇 Aprem</span> <span class="name" onclick="editName(this)" id="resAprem"></span></div>
+            <div class="shift-info"><span>🌃 Nuit</span> <span class="name" onclick="editName(this)" id="resNuit"></span></div>
+        </div>
+    </div>
+
+    <div class="week-selector">
+        <div class="week-tab active" id="tabCurrent" onclick="switchWeek(0)">Semaine Actuelle</div>
+        <div class="week-tab" id="tabNext" onclick="switchWeek(1)">Semaine Prochaine</div>
+    </div>
+
+    <div id="schedule"></div>
+
+    <div class="normal-staff-card">
+        <div style="font-weight:bold; margin-bottom:5px;">👨‍🔧 Horaire Normal</div>
+        <div class="shift-info"><span>Équipe Normal:</span> <span class="name">Redouane, Hakim, Hamza Zayne</span></div>
+    </div>
+</div>
+
+<script>
+    const REF_DATE = new Date('2026-04-06');
+    const TEAMS_CYCLE = [["Ismail", "Hamza", "Hicham"], ["Hamza", "Hicham", "Ismail"], ["Hicham", "Ismail", "Hamza"]];
+
+    function getShiftsForDate(date) {
+        const diffWeeks = Math.floor((date - REF_DATE) / (7 * 24 * 60 * 60 * 1000));
+        return [...TEAMS_CYCLE[((diffWeeks % 3) + 3) % 3]];
+    }
+
+    function openService() {
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('maintenance-content').style.display = 'block';
+        renderWeek(0);
+    }
+
+    function goBack() {
+        document.getElementById('main-menu').style.display = 'flex';
+        document.getElementById('maintenance-content').style.display = 'none';
+    }
+
+    function editName(el) {
+        let n = prompt("Changer le nom:", el.innerText.replace(' ✏️',''));
+        if(n) el.innerHTML = n + ' <span class="edit-icon">✏️</span>';
+    }
+
+    function searchByDate() {
+        let v = document.getElementById('inputDate').value;
+        if(v) {
+            let d = new Date(v);
+            let s = getShiftsForDate(d);
+            document.getElementById('resDateTitle').innerText = d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+            document.getElementById('resMatin').innerHTML = s[0] + ' ✏️';
+            document.getElementById('resAprem').innerHTML = s[1] + ' ✏️';
+            document.getElementById('resNuit').innerHTML = s[2] + ' ✏️';
+            document.getElementById('searchResult').style.display = 'block';
+        }
+    }
+
+    function switchWeek(o) {
+        document.querySelectorAll('.week-tab').forEach(t=>t.classList.remove('active'));
+        event.target.classList.add('active');
+        renderWeek(o);
+    }
+
+    function renderWeek(offset) {
+        let div = document.getElementById('schedule');
+        let today = new Date();
+        document.getElementById('currentDateDisplay').innerText = today.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+        
+        let start = new Date();
+        start.setDate(start.getDate() - (start.getDay()||7) + 1 + (offset*7));
+
+        let h = "";
+        for(let i=0; i<6; i++) {
+            let d = new Date(start); d.setDate(start.getDate()+i);
+            let s = getShiftsForDate(d);
+            h += `<div class="day-card ${d.toDateString()==today.toDateString()?'today':''}">
+                <div class="day-title"><span>${d.toLocaleDateString('fr-FR',{weekday:'long'})
